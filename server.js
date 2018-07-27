@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 
 server.use(bodyParser.json());
 
-
 server.get('/projects', async (req, res) => {
     try {
         const projects = await projectModel.get();
@@ -68,22 +67,23 @@ server.post('/projects/', async (req, res) => {
 
 server.post('/actions/', async (req, res) => {
     let action = req.body;
-    if (!('project_id') in action || !('description') in action || !('notes') in action) {
+    if (!(action["project_id"]) || !('description') in action || !(action["notes"])) {
         res.status(400).send({ errorMessage: "Please provide the project id, description, and notes for the action." });
+    }
+    else if(action.description.length > 128){
+        res.status(400).send({errorMessage: "Please limit your descriptions to 128 characters."})
     }
 
     try {
-        // const projectCheck = await projectModel.get(action.project_id)
-        // if(projectCheck.id > 0){
+        const projectCheck = await projectModel.get(action.project_id)
+        console.log(projectCheck);
+        if(projectCheck.id > 0){
         const newAction = await actionModel.insert(action);
         res.status(200).json(newAction);
-        
-        // else
-        // res.status(400).send({errorMessage: "Could not retrieve project with specified ID."});
+        }
     }
     catch (err) {
-        console.log(action);
-        res.status(500).json({ error: 'Action could not be created.' })
+        res.status(500).json({ error: 'Action could not be created or project Id does not exist.' })
     }
 });
 
