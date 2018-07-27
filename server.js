@@ -53,6 +53,9 @@ server.post('/projects/', async (req, res) => {
     if (!('name') in project || !('description') in project) {
         res.status(400).send({ errorMessage: "Please provide a name and description for the project." });
     }
+    else if(project.description.length > 128){
+        res.status(400).send({errorMessage: "Please limit your descriptions to 128 characters."})
+    }
 
     try {
         const newProject= await projectModel.insert(project);
@@ -62,6 +65,45 @@ server.post('/projects/', async (req, res) => {
         res.status(500).json({ error: 'Project could not be created.' })
     }
 });
+
+server.post('/actions/', async (req, res) => {
+    let action = req.body;
+    if (!('project_id') in action || !('description') in action) {
+        res.status(400).send({ errorMessage: "Please provide the project id and description for the action." });
+    }
+
+    try {
+        // const projectCheck = await projectModel.get(action.project_id)
+        // if(projectCheck.id > 0){
+        const newAction = await actionModel.insert(action);
+        res.status(200).json(newAction);
+        
+        // else
+        // res.status(400).send({errorMessage: "Could not retrieve project with specified ID."});
+    }
+    catch (err) {
+        console.log(action);
+        res.status(500).json({ error: 'Action could not be created.' })
+    }
+});
+
+server.delete('/projects/:id', async (req, res) => {
+    let id = req.params.id;
+
+    try {
+        const deleted = await projectModel.remove(id);
+        if (deleted > 0)
+            res.status(200).json(deleted);
+        else
+            res.status(404).json({ error: 'The project with the specified ID could not be found' });
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Project could not be deleted' });
+    }
+
+})
+
+
 
 
 server.listen(8000, () => console.log('API running on port 8000'));
