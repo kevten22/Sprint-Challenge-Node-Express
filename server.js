@@ -165,6 +165,18 @@ server.put('/actions/:id', async (req, res) => {
     }
 })
 
+server.get('/projects/:id/actions', async (req, res) => {
+    let id = req.params.id;
+    try {
+        const actions = await projectModel.getProjectActions(id)
+        res.status(200).json(actions);
+    }
+    catch (err) {
+        res.status(500).json({ error: `Project's actions could not be retrieved.` })
+    }
+    
+})
+
 
 
 
