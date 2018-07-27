@@ -68,8 +68,8 @@ server.post('/projects/', async (req, res) => {
 
 server.post('/actions/', async (req, res) => {
     let action = req.body;
-    if (!('project_id') in action || !('description') in action) {
-        res.status(400).send({ errorMessage: "Please provide the project id and description for the action." });
+    if (!('project_id') in action || !('description') in action || !('notes') in action) {
+        res.status(400).send({ errorMessage: "Please provide the project id, description, and notes for the action." });
     }
 
     try {
