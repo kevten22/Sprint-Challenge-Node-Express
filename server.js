@@ -144,6 +144,27 @@ server.put('/projects/:id', async (req, res) => {
 })
 
 
+server.put('/actions/:id', async (req, res) => {
+    let id = req.params.id;
+    let updatedAction = req.body;
+    if (!('project_id') in updatedAction || !('description') in updatedAction) {
+        res.status(400).send({ errorMessage: "Please provide the project id and description for the action." });
+    }
+
+    try {
+        const updated = await actionModel.update(id, updatedAction);
+        console.log(updated);
+        if (updated.id > 0)
+            res.status(200).json(updated);
+        else
+            res.status(404).json({ error: 'The action with the specified ID could not be found' });
+    }
+
+    catch (err) {
+        res.status(500).json({ error: 'Action could not be updated' });
+    }
+})
+
 
 
 
