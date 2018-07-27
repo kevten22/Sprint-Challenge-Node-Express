@@ -28,4 +28,25 @@ server.get('/projects/:id', async (req, res) => {
     }
 });
 
+server.get('/actions', async (req, res) => {
+    try {
+        const actions = await actionModel.get();
+        res.status(200).json(actions);
+    } catch (err) {
+        res.status(500).json({ error: 'Actions could not be retrieved.' })
+    }
+});
+
+server.get('/actions/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const action = await actionModel.get(id)
+        res.status(200).json(action);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Action could not be retrieved.' })
+    }
+});
+
+
 server.listen(8000, () => console.log('API running on port 8000'));
