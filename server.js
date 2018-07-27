@@ -103,6 +103,47 @@ server.delete('/projects/:id', async (req, res) => {
 
 })
 
+server.delete('/actions/:id', async (req, res) => {
+    let id = req.params.id;
+
+    try {
+        const deleted = await actionModel.remove(id);
+        if (deleted > 0)
+            res.status(200).json(deleted);
+        else
+            res.status(404).json({ error: 'The action with the specified ID could not be found' });
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Action could not be deleted' });
+    }
+
+})
+
+server.put('/projects/:id', async (req, res) => {
+    let id = req.params.id;
+    let updatedProject = req.body;
+    if (!('name') in updatedProject || !('description') in updatedProject) {
+        res.status(400).send({ errorMessage: "Please provide a name and description for the project." });
+    }
+    else if(updatedProject.description.length > 128){
+        res.status(400).send({errorMessage: "Please limit your descriptions to 128 characters."})
+    }
+
+    try {
+        const updated = await projectModel.update(id, updatedProject);
+        console.log(updated);
+        if (updated.id > 0)
+            res.status(200).json(updated);
+        else
+            res.status(404).json({ error: 'The project with the specified ID could not be found' });
+    }
+
+    catch (err) {
+        res.status(500).json({ error: 'Project could not be updated' });
+    }
+})
+
+
 
 
 
