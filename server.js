@@ -48,5 +48,20 @@ server.get('/actions/:id', async (req, res) => {
     }
 });
 
+server.post('/projects/', async (req, res) => {
+    let project = req.body;
+    if (!('name') in project || !('description') in project) {
+        res.status(400).send({ errorMessage: "Please provide a name and description for the project." });
+    }
+
+    try {
+        const newProject= await projectModel.insert(project);
+        res.status(200).json(newProject);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Project could not be created.' })
+    }
+});
+
 
 server.listen(8000, () => console.log('API running on port 8000'));
